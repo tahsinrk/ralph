@@ -45,7 +45,7 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          OPEN=$(gh issue list --label "upstream-update" --state open --json number --jq length 2>/dev/null || echo "0")
+          OPEN=$(gh issue list --repo "${{ github.repository }}" --label "upstream-update" --state open --json number --jq length 2>/dev/null || echo "0")
           echo "has_open_issue=$([ "$OPEN" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
 
       - name: Create issue
@@ -80,8 +80,8 @@ jobs:
           - [ ] Review FORK.md — does anything need updating?
           BODYEOF
 
-          gh label create "upstream-update" --description "New commits available from snarktank/ralph" --color "0075ca" 2>/dev/null || true
-          gh issue create \
+          gh label create "upstream-update" --repo "${{ github.repository }}" --description "New commits available from snarktank/ralph" --color "0075ca" 2>/dev/null || true
+          gh issue create --repo "${{ github.repository }}" \
             --title "Upstream update: ${COMMIT_COUNT} new commit(s) from snarktank/ralph" \
             --label "upstream-update" \
             --body-file /tmp/issue_body.md
