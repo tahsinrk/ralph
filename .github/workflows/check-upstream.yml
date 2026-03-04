@@ -1,0 +1,86 @@
+name: Check Upstream Updates
+
+on:
+  schedule:
+    - cron: '0 9 * * 1'  # Every Monday at 9am UTC
+  workflow_dispatch:  # Manual trigger
+
+permissions:
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout fork
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Add upstream remote
+        run: git remote add upstream https://github.com/snarktank/ralph.git
+
+      - name: Fetch upstream
+        run: git fetch upstream main
+
+      - name: Check for new upstream commits
+        id: check
+        run: |
+          NEW_COMMITS=$(git log HEAD..upstream/main --oneline 2>/dev/null || echo "")
+          if [ -z "$NEW_COMMITS" ]; then
+            echo "up_to_date=true" >> "$GITHUB_OUTPUT"
+            echo "No new upstream commits."
+          else
+            COUNT=$(echo "$NEW_COMMITS" | wc -l | tr -d ' ')
+            echo "up_to_date=false" >> "$GITHUB_OUTPUT"
+            echo "commit_count=$COUNT" >> "$GITHUB_OUTPUT"
+            echo "$NEW_COMMITS" > /tmp/new_commits.txt
+            echo "$COUNT new upstream commits found."
+          fi
+
+      - name: Check for existing open issue
+        if: steps.check.outputs.up_to_date == 'false'
+        id: existing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          OPEN=$(gh issue list --label "upstream-update" --state open --json number --jq length 2>/dev/null || echo "0")
+          echo "has_open_issue=$([ "$OPEN" -gt 0 ] && echo true || echo false)" >> "$GITHUB_OUTPUT"
+
+      - name: Create issue
+        if: steps.check.outputs.up_to_date == 'false' && steps.existing.outputs.has_open_issue == 'false'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          COMMIT_COUNT: ${{ steps.check.outputs.commit_count }}
+        run: |
+          COMMITS=$(cat /tmp/new_commits.txt)
+          # Write body to temp file to avoid shell injection from commit messages
+          cat > /tmp/issue_body.md <<'BODYEOF'
+          ### New commits
+          BODYEOF
+          echo '```' >> /tmp/issue_body.md
+          cat /tmp/new_commits.txt >> /tmp/issue_body.md
+          echo '```' >> /tmp/issue_body.md
+          cat >> /tmp/issue_body.md <<'BODYEOF'
+
+          ### To review and merge
+          ```bash
+          git fetch upstream
+          git log upstream/main --oneline -10
+          git diff HEAD..upstream/main --stat
+
+          # If changes look good:
+          git merge upstream/main
+          # Or cherry-pick specific commits
+          ```
+
+          ### Before merging, check
+          - [ ] Do any upstream changes conflict with our fork additions (prompt mode, circuit breaker, dual-exit gate, rate-limit detection)?
+          - [ ] Review FORK.md — does anything need updating?
+          BODYEOF
+
+          gh label create "upstream-update" --description "New commits available from snarktank/ralph" --color "0075ca" 2>/dev/null || true
+          gh issue create \
+            --title "Upstream update: ${COMMIT_COUNT} new commit(s) from snarktank/ralph" \
+            --label "upstream-update" \
+            --body-file /tmp/issue_body.md

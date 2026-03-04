@@ -13,6 +13,10 @@
 
 set -e
 
+# Unset CLAUDECODE to allow spawning claude --print from within a Claude Code session.
+# ralph.sh uses non-interactive --print mode which doesn't conflict with parent sessions.
+unset CLAUDECODE
+
 # ===== Configuration =====
 TOOL="claude"  # Default to claude
 MAX_ITERATIONS=10

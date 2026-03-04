@@ -64,6 +64,14 @@ Detects API rate limits and backs off instead of failing.
 
 snarktank defaults to `amp`. This fork defaults to `claude` since that's what we use.
 
+### 6. CLAUDECODE env var unset
+
+Claude Code sets a `CLAUDECODE` environment variable to prevent nested sessions. ralph.sh unsets it because it uses `claude --print` (non-interactive pipe mode) which doesn't conflict with the parent session. Without this fix, ralph.sh fails when invoked from within a Claude Code session.
+
+### 7. Automated upstream update check
+
+GitHub Action (`.github/workflows/check-upstream.yml`) runs weekly (Monday 9am UTC) and opens an issue labeled `upstream-update` when snarktank/ralph has new commits. Deduplicates — won't create a new issue if one is already open.
+
 ## What was NOT changed
 
 - **CLAUDE.md** (agent instructions for PRD mode) — kept as-is
