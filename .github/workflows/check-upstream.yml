@@ -84,3 +84,15 @@ jobs:
             --title "Upstream update: ${COMMIT_COUNT} new commit(s) from snarktank/ralph" \
             --label "upstream-update" \
             --body-file /tmp/issue_body.md
+
+      - name: Notify Slack
+        if: steps.check.outputs.up_to_date == 'false' && steps.existing.outputs.has_open_issue == 'false'
+        env:
+          SLACK_BOT_TOKEN: ${{ secrets.SLACK_BOT_TOKEN }}
+          SLACK_CHANNEL_ID: C0AJL78AF5J
+          COMMIT_COUNT: ${{ steps.check.outputs.commit_count }}
+        run: |
+          curl -s -X POST https://slack.com/api/chat.postMessage \
+            -H "Authorization: Bearer ${SLACK_BOT_TOKEN}" \
+            -H "Content-Type: application/json" \
+            -d "{\"channel\":\"${SLACK_CHANNEL_ID}\",\"text\":\"Upstream update: ${COMMIT_COUNT} new commit(s) for tahsinrk/ralph from snarktank/ralph. Check GitHub Issues for details.\"}"
