@@ -30,7 +30,7 @@ Ask only critical questions where the initial prompt is ambiguous. Focus on:
 - **Scope/Boundaries:** What should it NOT do?
 - **Success Criteria:** How do we know it's done?
 
-### Format Questions Like This:
+#### Format Questions Like This:
 
 ```
 1. What is the primary goal of this feature?
@@ -60,13 +60,13 @@ This lets users respond with "1A, 2C, 3B" for quick iteration. Remember to inden
 
 Generate the PRD with these sections:
 
-### 1. Introduction/Overview
+#### 1. Introduction/Overview
 Brief description of the feature and the problem it solves.
 
-### 2. Goals
+#### 2. Goals
 Specific, measurable objectives (bullet list).
 
-### 3. User Stories
+#### 3. User Stories
 Each story needs:
 - **Title:** Short descriptive name
 - **Description:** "As a [user], I want [feature] so that [benefit]"
@@ -90,32 +90,32 @@ Each story should be small enough to implement in one focused session.
 - Acceptance criteria must be verifiable, not vague. "Works correctly" is bad. "Button shows confirmation dialog before deleting" is good.
 - **For any story with UI changes:** Always include "Verify in browser using dev-browser skill" as acceptance criteria. This ensures visual verification of frontend work.
 
-### 4. Functional Requirements
+#### 4. Functional Requirements
 Numbered list of specific functionalities:
 - "FR-1: The system must allow users to..."
 - "FR-2: When a user clicks X, the system must..."
 
 Be explicit and unambiguous.
 
-### 5. Non-Goals (Out of Scope)
+#### 5. Non-Goals (Out of Scope)
 What this feature will NOT include. Critical for managing scope.
 
-### 6. Design Considerations (Optional)
+#### 6. Design Considerations (Optional)
 - UI/UX requirements
 - Link to mockups if available
 - Relevant existing components to reuse
 
-### 7. Technical Considerations (Optional)
+#### 7. Technical Considerations (Optional)
 - Known constraints or dependencies
 - Integration points with existing systems
 - Performance requirements
 
-### 8. Success Metrics
+#### 8. Success Metrics
 How will success be measured?
 - "Reduce time to complete X by 50%"
 - "Increase conversion rate by 10%"
 
-### 9. Open Questions
+#### 9. Open Questions
 Remaining questions or areas needing clarification.
 
 ---

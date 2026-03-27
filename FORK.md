@@ -5,7 +5,7 @@
 
 ## What this fork adds over snarktank/ralph
 
-### 1. Prompt mode (`--prompt`, `--prompt-file`)
+#### 1. Prompt mode (`--prompt`, `--prompt-file`)
 
 snarktank/ralph requires `prd.json` — the entire loop is built around picking the next incomplete story. This fork adds plain prompt mode for ad-hoc tasks where you don't have or want a PRD.
 
@@ -25,7 +25,7 @@ snarktank/ralph requires `prd.json` — the entire loop is built around picking 
 
 When prompt mode is active, ralph generates agent instructions on the fly that tell Claude to: read `progress.txt`, do the work, append progress, signal `<promise>COMPLETE</promise>` when done. No `prd.json` needed.
 
-### 2. Circuit breaker (from frankbria/ralph-claude-code)
+#### 2. Circuit breaker (from frankbria/ralph-claude-code)
 
 Stops the loop when Claude is stuck rather than burning through all iterations.
 
@@ -41,7 +41,7 @@ CB_NO_PROGRESS_THRESHOLD=3   # iterations with no progress before stopping
 CB_SAME_ERROR_THRESHOLD=5    # same error repeated before stopping
 ```
 
-### 3. Dual-exit gate (from frankbria/ralph-claude-code)
+#### 3. Dual-exit gate (from frankbria/ralph-claude-code)
 
 Prevents premature exits when Claude says "done" but isn't.
 
@@ -51,7 +51,7 @@ Prevents premature exits when Claude says "done" but isn't.
 
 **Why:** Claude commonly says "I'm done" mid-task. The dual-exit gate catches this in prompt mode. PRD mode doesn't need it because the story tracking already serves as the second confirmation.
 
-### 4. Rate-limit detection (from frankbria/ralph-claude-code)
+#### 4. Rate-limit detection (from frankbria/ralph-claude-code)
 
 Detects API rate limits and backs off instead of failing.
 
@@ -60,15 +60,15 @@ Detects API rate limits and backs off instead of failing.
 2. Text fallback: checks last 30 lines of output for rate-limit language, filtering out echoed file content (`"type": "user"`, `"tool_result"` lines) to avoid false positives
 3. On detection: waits 60 seconds then retries
 
-### 5. Default tool changed to Claude
+#### 5. Default tool changed to Claude
 
 snarktank defaults to `amp`. This fork defaults to `claude` since that's what we use.
 
-### 6. CLAUDECODE env var unset
+#### 6. CLAUDECODE env var unset
 
 Claude Code sets a `CLAUDECODE` environment variable to prevent nested sessions. ralph.sh unsets it because it uses `claude --print` (non-interactive pipe mode) which doesn't conflict with the parent session. Without this fix, ralph.sh fails when invoked from within a Claude Code session.
 
-### 7. Automated upstream update check
+#### 7. Automated upstream update check
 
 GitHub Action (`.github/workflows/check-upstream.yml`) runs weekly (Monday 9am UTC) and opens an issue labeled `upstream-update` when snarktank/ralph has new commits. Deduplicates — won't create a new issue if one is already open.
 

@@ -49,13 +49,13 @@ Take a PRD (markdown file or text) and convert it to `prd.json` in your ralph di
 
 Ralph spawns a fresh Amp instance per iteration with no memory of previous work. If a story is too big, the LLM runs out of context before finishing and produces broken code.
 
-### Right-sized stories:
+#### Right-sized stories:
 - Add a database column and migration
 - Add a UI component to an existing page
 - Update a server action with new logic
 - Add a filter dropdown to a list
 
-### Too big (split these):
+#### Too big (split these):
 - "Build the entire dashboard" - Split into: schema, queries, UI components, filters
 - "Add authentication" - Split into: schema, middleware, login UI, session handling
 - "Refactor the API" - Split into one story per endpoint or pattern
@@ -84,20 +84,20 @@ Stories execute in priority order. Earlier stories must not depend on later ones
 
 Each criterion must be something Ralph can CHECK, not something vague.
 
-### Good criteria (verifiable):
+#### Good criteria (verifiable):
 - "Add `status` column to tasks table with default 'pending'"
 - "Filter dropdown has options: All, Active, Completed"
 - "Clicking delete shows confirmation dialog"
 - "Typecheck passes"
 - "Tests pass"
 
-### Bad criteria (vague):
+#### Bad criteria (vague):
 - "Works correctly"
 - "User can do X easily"
 - "Good UX"
 - "Handles edge cases"
 
-### Always include as final criterion:
+#### Always include as final criterion:
 ```
 "Typecheck passes"
 ```
@@ -107,7 +107,7 @@ For stories with testable logic, also include:
 "Tests pass"
 ```
 
-### For stories that change UI, also include:
+#### For stories that change UI, also include:
 ```
 "Verify in browser using dev-browser skill"
 ```
